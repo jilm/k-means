@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <syslog.h>
+#include <gsl/gsl_matrix.h>
 #include "cluster.h"
 
 /* Flag set by ‘--verbose’. */
@@ -40,6 +41,8 @@ static int debug_flag = 0;
  */
 int main (int argc, char **argv) {
     
+    gsl_matrix *pokus_matrix = gsl_matrix_alloc(6, 7);
+
     openlog(argv[0], LOG_PERROR | LOG_NDELAY, 0);
     syslog(LOG_INFO, "");
     
@@ -138,15 +141,12 @@ int main (int argc, char **argv) {
     /* Instead of reporting ‘--verbose’
      and ‘--brief’ as they are encountered,
      we report the final status resulting from them. */
-    if (verbose_flag)
-        puts ("verbose flag is set");
-    
-    /* Print any remaining command line arguments (not options). */
-    if (optind < argc) {
-        printf ("non-option ARGV-elements: ");
-        while (optind < argc)
-            printf ("%s ", argv[optind++]);
-        putchar ('\n');
+    if (debug_flag) {
+        setlogmask(LOG_UPTO(LOG_DEBUG));
+    } else if (verbose_flag) {
+        setlogmask(LOG_UPTO(LOG_INFO));
+    } else {
+        setlogmask(LOG_UPTO(LOG_WARNING));
     }
     
     /* load training set */
@@ -162,6 +162,7 @@ int main (int argc, char **argv) {
 
     if (mode_flag == 'f') {
         syslog(LOG_DEBUG, "Entering clasify mode.");
+        
     } else if (mode_flag == 'l') {
         syslog(LOG_DEBUG, "Entering learn mode.");
     } else if (mode_flag == 'a') {

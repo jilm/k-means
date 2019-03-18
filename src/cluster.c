@@ -268,3 +268,4 @@ void read_vectors(FILE *file, float **output_buffer, int *dimension, int *n) {
     free(char_buffer);
     
 }
+

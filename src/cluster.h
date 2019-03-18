@@ -44,6 +44,19 @@ typedef struct {
     int size;
 } matrix;
 
+typedef struct {
+    int dimension;
+    int k;
+    float *centroids;
+} nearist_neighbor_model;
+
+typedef struct {
+    int dimension;
+    int k;
+    float *centroids;
+    float *sigma;
+} er_model;
+
 #define VECTOR(name, dim) vector name; \
 name.buffer = (float *)malloc(dim * sizeof(float));\
 name.size = dim;
@@ -69,10 +82,11 @@ name.size = dim * m;\
  * Params:
  *      v: a vector to clasify.
  *      centroids: the centroids.
+ *      inertia: returns square distace betwwen vector v and the centroid
  *
  * Returns a number from interval 0..centrids.n
  */
-int evaluate_vector(vector v, matrix centroids, double *inertia);
+int evaluate_vector(vector v, matrix centroids, double *min_distance);
 
 /*
  * Returns a vector that contains a cluster index for each vector in the
