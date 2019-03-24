@@ -87,7 +87,7 @@ int em_covariance(gsl_matrix * training_set, int * classification, gsl_matrix * 
     return 1;
 }
 
-int em_classify(gsl_matrix * x, gsl_matrix * means, gsl_block * covariance, int * classification) {
+int em_classify(gsl_matrix * x, gsl_matrix * means, gsl_block * covariance, int * classification, int * has_changed) {
 
     int dim = x->size2;
     int n = x->size1;
@@ -117,6 +117,27 @@ int em_classify(gsl_matrix * x, gsl_matrix * means, gsl_block * covariance, int 
     }
 
     gsl_vector_free(work);
+    if (has_changed != NULL) {
+        (* has_changed) = change_flag;
+    }
     return 1;
 
+}
+
+int em_learn(gsl_matrix * training_set, gsl_matrix * means, gsl_block * covariance, int * classification) {
+
+    int dim = training_set->size2;
+    int n = training_set->size1;
+    int k = means->size1;
+    int has_changed = TRUE;
+
+    em_classify(training_set, means, covariance, classification, &has_changed);
+    if (has_changed) {
+        em_mean(training_set, classification, means);
+        em_covariance(training_set, classification, means, covariance);
+    } else {
+
+    }
+    return 1;
+    
 }
